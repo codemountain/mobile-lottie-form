@@ -1,0 +1,54 @@
+{
+    "namespace": "LottieForm",
+
+    "bridge_functions": [
+        {
+            "name": "LottieForm.ShowAnimation",
+            "android": "ca.codemountain.plugins.lottieform.LottieFormFunctions.ShowAnimation",
+            "ios": "LottieFormFunctions.ShowAnimation",
+            "description": "Present a fullscreen Lottie animation overlay over the WebView"
+        },
+        {
+            "name": "LottieForm.Dismiss",
+            "android": "ca.codemountain.plugins.lottieform.LottieFormFunctions.Dismiss",
+            "ios": "LottieFormFunctions.Dismiss",
+            "description": "Programmatically dismiss the current animation overlay"
+        }
+    ],
+
+    "android": {
+        "permissions": [],
+        "dependencies": {
+            "implementation": [
+                "com.airbnb.android:lottie-compose:6.7.1"
+            ]
+        },
+        "activities": [],
+        "services": [],
+        "receivers": [],
+        "providers": []
+    },
+
+    "ios": {
+        "info_plist": {},
+        "dependencies": {
+            "swift_packages": [
+                {
+                    "url": "https://github.com/airbnb/lottie-spm.git",
+                    "version": "4.6.0",
+                    "products": ["Lottie"]
+                }
+            ],
+            "pods": []
+        }
+    },
+
+    "events": [
+        "CodeMountain\\LottieForm\\Events\\AnimationStarted",
+        "CodeMountain\\LottieForm\\Events\\AnimationCompleted"
+    ],
+
+    "hooks": {
+        "copy_assets": "nativephp:mobile-lottie-form:copy-assets"
+    }
+}
