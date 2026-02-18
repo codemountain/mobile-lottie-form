@@ -6,6 +6,11 @@ Show success checkmarks, celebration effects, loading spinners, or any `.lottie`
 
 Drop your `.lottie` files in `resources/animations/`, call the fluent PHP API, and you're done.
 
+| Checked |
+|:---:|
+| ![](.github/checked-animation.gif) |
+| `checked.lottie` |
+
 ## Installation
 
 ```bash
