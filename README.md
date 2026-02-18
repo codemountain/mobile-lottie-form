@@ -199,6 +199,10 @@ public function handleAnimationCompleted(string $reason, ?string $id = null): vo
 | iOS | [lottie-spm](https://github.com/airbnb/lottie-spm) | 4.6.0 |
 | Android | [lottie-compose](https://github.com/airbnb/lottie-android) | 6.7.1 |
 
+## Acknowledgements
+
+Inspired by [atum/nativephp-loader](https://github.com/atumco/nativephp-loader), which provides Lottie-powered splash screens for NativePHP apps. LottieForm extends the concept to runtime overlays triggered from PHP.
+
 ## License
 
 MIT
