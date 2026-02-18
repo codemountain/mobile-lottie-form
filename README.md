@@ -25,16 +25,30 @@ php artisan native:plugin:register codemountain/mobile-lottie-form
 php artisan native:plugin:list
 ```
 
+## Publishing Animations
+
+This plugin includes a bundled `checked.lottie` animation (a checkmark success animation). Publish it to your project:
+
+```bash
+# Publish animations only
+php artisan vendor:publish --tag=lottie-form-animations
+
+# Publish everything
+php artisan vendor:publish --tag=lottie-form
+```
+
+This copies the bundled animations to `resources/animations/`.
+
 ## Adding Animations
 
-Place your `.lottie` files in `resources/animations/`:
+Place your `.lottie` files in `resources/animations/` (alongside any published ones):
 
 ```
 resources/
   animations/
-    checked.lottie
-    success.lottie
-    confetti.lottie
+    checked.lottie    ← published from plugin
+    success.lottie    ← your own
+    confetti.lottie   ← your own
 ```
 
 All `.lottie` files in this directory are automatically copied to both iOS and Android builds at compile time.

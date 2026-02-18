@@ -20,6 +20,14 @@ class LottieFormServiceProvider extends ServiceProvider
             $this->commands([
                 CopyAssetsCommand::class,
             ]);
+
+            $this->publishes([
+                __DIR__.'/../resources/animations' => resource_path('animations'),
+            ], 'lottie-form-animations');
+
+            $this->publishes([
+                __DIR__.'/../resources/animations' => resource_path('animations'),
+            ], 'lottie-form');
         }
     }
 }
