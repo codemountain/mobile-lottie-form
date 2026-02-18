@@ -20,9 +20,6 @@ composer require codemountain/mobile-lottie-form
 Register the plugin:
 
 ```bash
-# Publish the plugins provider (first time only)
-php artisan vendor:publish --tag=nativephp-plugins-provider
-
 # Register the plugin
 php artisan native:plugin:register codemountain/mobile-lottie-form
 
