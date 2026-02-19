@@ -208,3 +208,6 @@ Inspired by [atum/nativephp-loader](https://github.com/atumco/nativephp-loader),
 ## License
 
 MIT
+
+## Support
+support@codemountain.ca
