@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \CodeMountain\LottieForm\LottieForm duration(int $ms)
  * @method static \CodeMountain\LottieForm\LottieForm tapToDismiss(bool $tapToDismiss = true)
  * @method static \CodeMountain\LottieForm\LottieForm id(string $id)
+ * @method static \CodeMountain\LottieForm\LottieForm textField(string $layerName, string $value)
  * @method static void play()
  * @method static void dismiss()
  *

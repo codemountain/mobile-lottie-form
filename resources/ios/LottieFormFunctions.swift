@@ -26,6 +26,7 @@ enum LottieFormFunctions {
             let duration = parameters["duration"] as? Int
             let tapToDismiss = parameters["tapToDismiss"] as? Bool ?? true
             let id = parameters["id"] as? String ?? UUID().uuidString
+            let textFields = parameters["textFields"] as? [String: String]
 
             let clampedSize = max(0.1, min(1.0, size))
 
@@ -54,6 +55,7 @@ enum LottieFormFunctions {
                     looping: looping,
                     duration: duration,
                     tapToDismiss: tapToDismiss,
+                    textFields: textFields,
                     id: id
                 )
             }
@@ -98,6 +100,7 @@ enum LottieFormFunctions {
         looping: Bool,
         duration: Int?,
         tapToDismiss: Bool,
+        textFields: [String: String]?,
         id: String
     ) {
         guard let windowScene = UIApplication.shared.connectedScenes
@@ -125,6 +128,7 @@ enum LottieFormFunctions {
         overlayVC.looping = looping
         overlayVC.duration = duration
         overlayVC.tapToDismiss = tapToDismiss
+        overlayVC.textFields = textFields
         overlayVC.animationId = id
 
         window.rootViewController = overlayVC
@@ -242,6 +246,7 @@ class LottieOverlayViewController: UIViewController {
     var looping: Bool = false
     var duration: Int?
     var tapToDismiss: Bool = true
+    var textFields: [String: String]?
     var animationId: String = ""
 
     private var animationView: LottieAnimationView?
@@ -285,6 +290,11 @@ class LottieOverlayViewController: UIViewController {
         lottieView.backgroundBehavior = .pauseAndRestore
         lottieView.translatesAutoresizingMaskIntoConstraints = false
         lottieView.loopMode = looping ? .loop : .playOnce
+
+        // Apply dynamic text fields if provided
+        if let textFields = textFields, !textFields.isEmpty {
+            lottieView.textProvider = DictionaryTextProvider(textFields)
+        }
 
         view.addSubview(lottieView)
 

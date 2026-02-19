@@ -15,6 +15,7 @@ import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
 import com.airbnb.lottie.LottieListener
+import com.airbnb.lottie.TextDelegate
 import com.nativephp.mobile.bridge.BridgeError
 import com.nativephp.mobile.bridge.BridgeFunction
 import com.nativephp.mobile.bridge.BridgeResponse
@@ -46,6 +47,9 @@ object LottieFormFunctions {
             val duration = (parameters["duration"] as? Number)?.toLong()
             val tapToDismiss = parameters["tapToDismiss"] as? Boolean ?: true
             val id = parameters["id"] as? String ?: ""
+
+            @Suppress("UNCHECKED_CAST")
+            val textFields = parameters["textFields"] as? Map<String, String>
 
             val clampedSize = size.coerceIn(0.1, 1.0)
             val assetPath = "animations/$animationPath"
@@ -110,6 +114,15 @@ object LottieFormFunctions {
                 lottieTask.addListener(object : LottieListener<LottieComposition> {
                     override fun onResult(composition: LottieComposition) {
                         animationView.setComposition(composition)
+
+                        // Apply dynamic text fields if provided
+                        if (!textFields.isNullOrEmpty()) {
+                            val textDelegate = TextDelegate(animationView)
+                            for ((layerName, value) in textFields) {
+                                textDelegate.setText(layerName, value)
+                            }
+                            animationView.setTextDelegate(textDelegate)
+                        }
 
                         // Start playback after fade-in
                         overlay.animate()

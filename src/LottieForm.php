@@ -26,6 +26,9 @@ class LottieForm
 
     protected ?string $id = null;
 
+    /** @var array<string, string> */
+    protected array $textFields = [];
+
     /**
      * Start building a Lottie animation overlay.
      *
@@ -121,6 +124,19 @@ class LottieForm
     }
 
     /**
+     * Replace a named text layer in the animation.
+     *
+     * Requires the .lottie file to contain a text layer with the given name.
+     * Ask your designer to name text layers in After Effects (e.g. "title", "subtitle").
+     */
+    public function textField(string $layerName, string $value): self
+    {
+        $this->textFields[$layerName] = $value;
+
+        return $this;
+    }
+
+    /**
      * Set a custom ID for tracking which animation completed.
      */
     public function id(string $id): self
@@ -150,6 +166,7 @@ class LottieForm
             'duration' => $this->duration,
             'tapToDismiss' => $this->tapToDismiss,
             'id' => $this->id,
+            'textFields' => ! empty($this->textFields) ? $this->textFields : null,
         ]));
 
         $this->reset();
@@ -179,5 +196,6 @@ class LottieForm
         $this->duration = null;
         $this->tapToDismiss = true;
         $this->id = null;
+        $this->textFields = [];
     }
 }

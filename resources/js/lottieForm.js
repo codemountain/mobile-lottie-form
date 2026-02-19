@@ -49,6 +49,7 @@ function createBuilder(animationPath) {
         duration: null,
         tapToDismiss: true,
         id: crypto.randomUUID(),
+        textFields: null,
     };
 
     return {
@@ -86,6 +87,11 @@ function createBuilder(animationPath) {
         },
         id(id) {
             config.id = id;
+            return this;
+        },
+        textField(layerName, value) {
+            if (!config.textFields) config.textFields = {};
+            config.textFields[layerName] = value;
             return this;
         },
         async play() {

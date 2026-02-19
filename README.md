@@ -133,6 +133,29 @@ await lottieForm.dismiss();
 | `duration(int)` | `null` | Auto-dismiss after N milliseconds (independent of animation) |
 | `tapToDismiss(bool)` | `true` | Allow tapping the overlay to dismiss |
 | `id(string)` | auto-generated | Identifier returned in events to track which animation completed |
+| `textField(string, string)` | none | Replace a named text layer in the animation |
+
+## Dynamic Text
+
+If your `.lottie` file contains named text layers, you can replace their content at runtime. Ask your designer to name text layers in After Effects (e.g. `title`, `subtitle`, `message`).
+
+```php
+LottieForm::show('success-with-text.lottie')
+    ->textField('title', 'Report Created!')
+    ->textField('subtitle', 'Syncing now...')
+    ->size(0.6)
+    ->autoClose()
+    ->play();
+```
+
+```javascript
+await lottieForm.show('success-with-text.lottie')
+    .textField('title', 'Report Created!')
+    .textField('subtitle', 'Syncing now...')
+    .play();
+```
+
+Text layers without a matching `textField()` call keep their default value from the animation file.
 
 ## Events
 
