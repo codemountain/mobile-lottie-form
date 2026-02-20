@@ -47,6 +47,7 @@ class CopyAssetsCommand extends NativePluginHookCommand
             if ($this->isIos()) {
                 $dest = $this->buildPath().'/NativePHP/Resources/animations/'.$filename;
                 $this->copyFile($file, $dest);
+                $this->patchFontAscent($dest);
             }
         }
 
@@ -82,6 +83,59 @@ class CopyAssetsCommand extends NativePluginHookCommand
         }
 
         $this->info('LottieForm: Copied '.count($fonts).' font(s) from '.$fontsDir);
+    }
+
+    /**
+     * Lottie iOS requires an 'ascent' field on every font entry.
+     * Many .lottie files exported from the wild omit it, causing
+     * invalidInput errors at parse time. This patches them at build time.
+     */
+    protected function patchFontAscent(string $lottiePath): void
+    {
+        $zip = new \ZipArchive;
+
+        if ($zip->open($lottiePath) !== true) {
+            return;
+        }
+
+        $patched = false;
+
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $name = $zip->getNameIndex($i);
+
+            if (! str_ends_with($name, '.json') || $name === 'manifest.json') {
+                continue;
+            }
+
+            $json = json_decode($zip->getFromIndex($i), true);
+
+            if (! isset($json['fonts']['list']) || ! is_array($json['fonts']['list'])) {
+                continue;
+            }
+
+            $fontPatched = false;
+
+            foreach ($json['fonts']['list'] as &$font) {
+                if (! isset($font['ascent'])) {
+                    $font['ascent'] = 75.0;
+                    $fontPatched = true;
+                }
+            }
+
+            unset($font);
+
+            if ($fontPatched) {
+                $zip->deleteName($name);
+                $zip->addFromString($name, json_encode($json, JSON_UNESCAPED_SLASHES));
+                $patched = true;
+            }
+        }
+
+        $zip->close();
+
+        if ($patched) {
+            $this->info('LottieForm: Patched missing font ascent in '.basename($lottiePath));
+        }
     }
 
     /**

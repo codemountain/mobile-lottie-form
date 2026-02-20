@@ -271,22 +271,11 @@ class LottieOverlayViewController: UIViewController {
     }
 
     private func loadAndPlayAnimation() {
-        // Use DotLottieFile.named() — same pattern as nativephp-loader
-        // This searches the entire bundle without needing a specific subdirectory,
-        // which handles iOS bundle flattening where resources lose their directory structure
-        print("LottieForm: Loading animation '\(animationName)'")
         Task {
             do {
                 let dotLottieFile = try await DotLottieFile.named(animationName)
-                print("LottieForm: File loaded, setting up view")
                 await MainActor.run {
-                    do {
-                        try self.setupAnimationViewThrowing(with: dotLottieFile)
-                        print("LottieForm: Animation playing")
-                    } catch {
-                        print("LottieForm: Setup failed: \(error)")
-                        LottieFormFunctions.dismissOverlay(reason: "error", id: self.animationId)
-                    }
+                    self.setupAnimationView(with: dotLottieFile)
                 }
             } catch {
                 print("LottieForm: Failed to load .lottie file '\(self.animationName)': \(error)")
@@ -297,7 +286,7 @@ class LottieOverlayViewController: UIViewController {
         }
     }
 
-    private func setupAnimationViewThrowing(with dotLottieFile: DotLottieFile) throws {
+    private func setupAnimationView(with dotLottieFile: DotLottieFile) {
         let lottieView = LottieAnimationView()
         lottieView.loadAnimation(from: dotLottieFile)
         lottieView.contentMode = .scaleAspectFit
