@@ -359,7 +359,7 @@ class SystemFontProvider: AnimationFontProvider {
 
     private var registeredFonts: Set<String> = []
 
-    func fontFor(family: String, size: CGFloat) -> CTFont {
+    func fontFor(family: String, size: CGFloat) -> CTFont? {
         // Try loading the bundled font if not already registered
         if !registeredFonts.contains(family) {
             registerBundledFont(family: family)

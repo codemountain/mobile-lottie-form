@@ -51,13 +51,20 @@ object LottieFormFunctions {
             val fullScreen = parameters["fullScreen"] as? Boolean ?: false
             val id = parameters["id"] as? String ?: ""
 
-            @Suppress("UNCHECKED_CAST")
-            val textFields = parameters["textFields"] as? Map<String, String>
+            val textFields: Map<String, String>? = when (val raw = parameters["textFields"]) {
+                is Map<*, *> -> raw.entries.associate { (k, v) -> k.toString() to v.toString() }
+                is JSONObject -> {
+                    val map = mutableMapOf<String, String>()
+                    raw.keys().forEach { key -> map[key as String] = raw.getString(key) }
+                    map
+                }
+                else -> null
+            }
 
             val clampedSize = size.coerceIn(0.1, 1.0)
             val assetPath = "animations/$animationPath"
 
-            Log.d(TAG, "ShowAnimation: path=$assetPath, id=$id, size=$clampedSize, position=$position, fadeIn=$fadeInDuration")
+            Log.d(TAG, "ShowAnimation: path=$assetPath, id=$id, size=$clampedSize, position=$position, fadeIn=$fadeInDuration, textFields=$textFields, rawType=${parameters["textFields"]?.javaClass?.name}")
 
             // Verify asset exists before attempting to load
             val assetExists = try {
