@@ -120,10 +120,19 @@ object LottieFormFunctions {
                 // Load composition async with failure handling (prevents crash)
                 val lottieTask = LottieCompositionFactory.fromAsset(activity, assetPath)
 
-                // Fallback to system default font when animation references missing fonts
+                // Try bundled font from assets/fonts/, fall back to system default
                 animationView.setFontAssetDelegate(object : FontAssetDelegate() {
                     override fun fetchFont(fontFamily: String): Typeface {
-                        return Typeface.DEFAULT
+                        return try {
+                            Typeface.createFromAsset(activity.assets, "fonts/$fontFamily.ttf")
+                        } catch (_: Exception) {
+                            try {
+                                Typeface.createFromAsset(activity.assets, "fonts/$fontFamily.otf")
+                            } catch (_: Exception) {
+                                Log.d(TAG, "Font not found: $fontFamily, using system default")
+                                Typeface.DEFAULT
+                            }
+                        }
                     }
                 })
 
@@ -131,11 +140,12 @@ object LottieFormFunctions {
                     override fun onResult(composition: LottieComposition) {
                         animationView.setComposition(composition)
 
-                        // Apply dynamic text fields if provided
+                        // Apply dynamic text fields matched by layer name
                         if (!textFields.isNullOrEmpty()) {
-                            val textDelegate = TextDelegate(animationView)
-                            for ((layerName, value) in textFields) {
-                                textDelegate.setText(layerName, value)
+                            val textDelegate = object : TextDelegate(animationView) {
+                                override fun getText(layerName: String, input: String): String {
+                                    return textFields[layerName] ?: input
+                                }
                             }
                             animationView.setTextDelegate(textDelegate)
                         }

@@ -1,4 +1,5 @@
 import UIKit
+import CoreText
 import Lottie
 
 enum LottieFormFunctions {
@@ -352,10 +353,38 @@ class LottieOverlayViewController: UIViewController {
     }
 }
 
-// MARK: - System Font Fallback Provider
+// MARK: - Font Provider with Bundled Font Support
 
 class SystemFontProvider: AnimationFontProvider {
+
+    private var registeredFonts: Set<String> = []
+
     func fontFor(family: String, size: CGFloat) -> CTFont {
+        // Try loading the bundled font if not already registered
+        if !registeredFonts.contains(family) {
+            registerBundledFont(family: family)
+            registeredFonts.insert(family)
+        }
+
+        // Try the requested font family first (works if bundled or system-installed)
+        let font = CTFontCreateWithName(family as CFString, size, nil)
+        let resolvedName = CTFontCopyFamilyName(font) as String
+
+        if resolvedName.lowercased() == family.lowercased() {
+            return font
+        }
+
+        // Fall back to system font
         return CTFontCreateWithName("Helvetica Neue" as CFString, size, nil)
+    }
+
+    private func registerBundledFont(family: String) {
+        let extensions = ["ttf", "otf"]
+        for ext in extensions {
+            if let url = Bundle.main.url(forResource: family, withExtension: ext) {
+                CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
+                return
+            }
+        }
     }
 }

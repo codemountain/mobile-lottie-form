@@ -20,12 +20,20 @@ class CopyAssetsCommand extends NativePluginHookCommand
             return self::SUCCESS;
         }
 
+        $this->copyAnimations($animationsDir);
+        $this->copyFonts($animationsDir);
+
+        return self::SUCCESS;
+    }
+
+    protected function copyAnimations(string $animationsDir): void
+    {
         $files = glob($animationsDir.'/*.lottie');
 
         if (empty($files)) {
             $this->warn("LottieForm: No .lottie files found in {$animationsDir}");
 
-            return self::SUCCESS;
+            return;
         }
 
         foreach ($files as $file) {
@@ -43,8 +51,37 @@ class CopyAssetsCommand extends NativePluginHookCommand
         }
 
         $this->info('LottieForm: Copied '.count($files).' animation(s) from '.$animationsDir);
+    }
 
-        return self::SUCCESS;
+    protected function copyFonts(string $animationsDir): void
+    {
+        $fontsDir = $animationsDir.'/fonts';
+
+        if (! is_dir($fontsDir)) {
+            return;
+        }
+
+        $fonts = glob($fontsDir.'/*.{ttf,otf}', GLOB_BRACE);
+
+        if (empty($fonts)) {
+            return;
+        }
+
+        foreach ($fonts as $font) {
+            $filename = basename($font);
+
+            if ($this->isAndroid()) {
+                $dest = $this->buildPath().'/app/src/main/assets/fonts/'.$filename;
+                $this->copyFile($font, $dest);
+            }
+
+            if ($this->isIos()) {
+                $dest = $this->buildPath().'/NativePHP/Resources/'.$filename;
+                $this->copyFile($font, $dest);
+            }
+        }
+
+        $this->info('LottieForm: Copied '.count($fonts).' font(s) from '.$fontsDir);
     }
 
     /**

@@ -132,8 +132,31 @@ await lottieForm.dismiss();
 | `looping(bool)` | `false` | Loop the animation continuously |
 | `duration(int)` | `null` | Auto-dismiss after N milliseconds (independent of animation) |
 | `tapToDismiss(bool)` | `true` | Allow tapping the overlay to dismiss |
+| `fullScreen(bool)` | `false` | Expand animation to fill the entire screen |
 | `id(string)` | auto-generated | Identifier returned in events to track which animation completed |
 | `textField(string, string)` | none | Replace a named text layer in the animation |
+
+## Full Screen
+
+Use `fullScreen()` to expand the animation to fill the entire viewport. Without it, the animation is constrained to a square based on `size()` (fraction of screen width). With `fullScreen()`, the animation view is pinned to all edges of the screen while maintaining its aspect ratio.
+
+```php
+LottieForm::show('celebration.lottie')
+    ->fullScreen()
+    ->fadeInDuration(600)
+    ->autoClose()
+    ->play();
+```
+
+```javascript
+await lottieForm.show('celebration.lottie')
+    .fullScreen()
+    .fadeInDuration(600)
+    .autoClose()
+    .play();
+```
+
+> When `fullScreen()` is enabled, `size()` and `position()` are ignored.
 
 ## Dynamic Text
 
@@ -156,6 +179,29 @@ await lottieForm.show('success-with-text.lottie')
 ```
 
 Text layers without a matching `textField()` call keep their default value from the animation file.
+
+## Custom Fonts
+
+Lottie animations may reference custom fonts (e.g. a designer uses "TikTok Sans" in After Effects). If the font isn't bundled, the plugin falls back to the system default font (Helvetica Neue on iOS, Roboto on Android) so the app never crashes.
+
+To bundle custom fonts so they render correctly:
+
+1. Place `.ttf` or `.otf` files in `resources/animations/fonts/`:
+
+```
+resources/
+  animations/
+    success.lottie
+    fonts/
+      TikTok Sans.ttf    ← matches the font family name in the .lottie file
+      CustomFont.otf
+```
+
+2. That's it. The build hook copies fonts to the correct location on each platform:
+   - **Android**: `assets/fonts/` (Lottie's default lookup path)
+   - **iOS**: App bundle (registered at runtime via CoreText)
+
+> The font filename must match the font family name referenced in the `.lottie` file. Open the `.lottie` (or source `.json`) and look for `"fFamily"` values to find the exact name.
 
 ## Events
 
