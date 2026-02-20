@@ -24,6 +24,8 @@ class LottieForm
 
     protected bool $tapToDismiss = true;
 
+    protected bool $fullScreen = false;
+
     protected ?string $id = null;
 
     /** @var array<string, string> */
@@ -114,6 +116,16 @@ class LottieForm
     }
 
     /**
+     * Expand the animation to fill the entire screen.
+     */
+    public function fullScreen(bool $fullScreen = true): self
+    {
+        $this->fullScreen = $fullScreen;
+
+        return $this;
+    }
+
+    /**
      * Allow tapping the overlay to dismiss.
      */
     public function tapToDismiss(bool $tapToDismiss = true): self
@@ -165,6 +177,7 @@ class LottieForm
             'looping' => $this->looping,
             'duration' => $this->duration,
             'tapToDismiss' => $this->tapToDismiss,
+            'fullScreen' => $this->fullScreen,
             'id' => $this->id,
             'textFields' => ! empty($this->textFields) ? $this->textFields : null,
         ]));
@@ -195,6 +208,7 @@ class LottieForm
         $this->looping = false;
         $this->duration = null;
         $this->tapToDismiss = true;
+        $this->fullScreen = false;
         $this->id = null;
         $this->textFields = [];
     }

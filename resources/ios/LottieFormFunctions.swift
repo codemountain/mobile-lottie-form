@@ -25,6 +25,7 @@ enum LottieFormFunctions {
             let looping = parameters["looping"] as? Bool ?? false
             let duration = parameters["duration"] as? Int
             let tapToDismiss = parameters["tapToDismiss"] as? Bool ?? true
+            let fullScreen = parameters["fullScreen"] as? Bool ?? false
             let id = parameters["id"] as? String ?? UUID().uuidString
             let textFields = parameters["textFields"] as? [String: String]
 
@@ -55,6 +56,7 @@ enum LottieFormFunctions {
                     looping: looping,
                     duration: duration,
                     tapToDismiss: tapToDismiss,
+                    fullScreen: fullScreen,
                     textFields: textFields,
                     id: id
                 )
@@ -100,6 +102,7 @@ enum LottieFormFunctions {
         looping: Bool,
         duration: Int?,
         tapToDismiss: Bool,
+        fullScreen: Bool,
         textFields: [String: String]?,
         id: String
     ) {
@@ -128,6 +131,7 @@ enum LottieFormFunctions {
         overlayVC.looping = looping
         overlayVC.duration = duration
         overlayVC.tapToDismiss = tapToDismiss
+        overlayVC.fullScreen = fullScreen
         overlayVC.textFields = textFields
         overlayVC.animationId = id
 
@@ -246,6 +250,7 @@ class LottieOverlayViewController: UIViewController {
     var looping: Bool = false
     var duration: Int?
     var tapToDismiss: Bool = true
+    var fullScreen: Bool = false
     var textFields: [String: String]?
     var animationId: String = ""
 
@@ -298,22 +303,30 @@ class LottieOverlayViewController: UIViewController {
 
         view.addSubview(lottieView)
 
-        let screenWidth = UIScreen.main.bounds.width
-        let animationDimension = screenWidth * CGFloat(animationSize)
+        if fullScreen {
+            // Pin to all edges for true full-screen coverage
+            lottieView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+            lottieView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+            lottieView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+            lottieView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        } else {
+            let screenWidth = UIScreen.main.bounds.width
+            let animationDimension = screenWidth * CGFloat(animationSize)
 
-        // Horizontal: always centered
-        lottieView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        lottieView.widthAnchor.constraint(equalToConstant: animationDimension).isActive = true
-        lottieView.heightAnchor.constraint(equalToConstant: animationDimension).isActive = true
+            // Horizontal: always centered
+            lottieView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            lottieView.widthAnchor.constraint(equalToConstant: animationDimension).isActive = true
+            lottieView.heightAnchor.constraint(equalToConstant: animationDimension).isActive = true
 
-        // Vertical: based on position
-        switch animationPosition {
-        case "top":
-            lottieView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40).isActive = true
-        case "bottom":
-            lottieView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40).isActive = true
-        default:
-            lottieView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+            // Vertical: based on position
+            switch animationPosition {
+            case "top":
+                lottieView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40).isActive = true
+            case "bottom":
+                lottieView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40).isActive = true
+            default:
+                lottieView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+            }
         }
 
         self.animationView = lottieView

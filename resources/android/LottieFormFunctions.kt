@@ -46,6 +46,7 @@ object LottieFormFunctions {
             val looping = parameters["looping"] as? Boolean ?: false
             val duration = (parameters["duration"] as? Number)?.toLong()
             val tapToDismiss = parameters["tapToDismiss"] as? Boolean ?: true
+            val fullScreen = parameters["fullScreen"] as? Boolean ?: false
             val id = parameters["id"] as? String ?: ""
 
             @Suppress("UNCHECKED_CAST")
@@ -98,12 +99,18 @@ object LottieFormFunctions {
                     isFocusable = true
                 }
 
-                val screenWidth = activity.resources.displayMetrics.widthPixels
-                val animSize = (screenWidth * clampedSize).toInt()
-
                 val animationView = LottieAnimationView(activity).apply {
-                    layoutParams = FrameLayout.LayoutParams(animSize, animSize).apply {
-                        this.gravity = gravity
+                    layoutParams = if (fullScreen) {
+                        FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                    } else {
+                        val screenWidth = activity.resources.displayMetrics.widthPixels
+                        val animSize = (screenWidth * clampedSize).toInt()
+                        FrameLayout.LayoutParams(animSize, animSize).apply {
+                            this.gravity = gravity
+                        }
                     }
                     repeatCount = if (looping) LottieDrawable.INFINITE else 0
                 }
