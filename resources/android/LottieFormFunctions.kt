@@ -3,6 +3,7 @@ package ca.codemountain.plugins.lottieform
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -10,6 +11,7 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentActivity
+import com.airbnb.lottie.FontAssetDelegate
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.LottieCompositionFactory
@@ -117,6 +119,13 @@ object LottieFormFunctions {
 
                 // Load composition async with failure handling (prevents crash)
                 val lottieTask = LottieCompositionFactory.fromAsset(activity, assetPath)
+
+                // Fallback to system default font when animation references missing fonts
+                animationView.setFontAssetDelegate(object : FontAssetDelegate() {
+                    override fun fetchFont(fontFamily: String): Typeface {
+                        return Typeface.DEFAULT
+                    }
+                })
 
                 lottieTask.addListener(object : LottieListener<LottieComposition> {
                     override fun onResult(composition: LottieComposition) {

@@ -296,6 +296,9 @@ class LottieOverlayViewController: UIViewController {
         lottieView.translatesAutoresizingMaskIntoConstraints = false
         lottieView.loopMode = looping ? .loop : .playOnce
 
+        // Fallback to system font when animation references missing fonts
+        lottieView.fontProvider = SystemFontProvider()
+
         // Apply dynamic text fields if provided
         if let textFields = textFields, !textFields.isEmpty {
             lottieView.textProvider = DictionaryTextProvider(textFields)
@@ -346,5 +349,13 @@ class LottieOverlayViewController: UIViewController {
     @objc private func handleTap() {
         guard tapToDismiss else { return }
         LottieFormFunctions.dismissOverlay(reason: "tapped", id: animationId)
+    }
+}
+
+// MARK: - System Font Fallback Provider
+
+class SystemFontProvider: AnimationFontProvider {
+    func fontFor(family: String, size: CGFloat) -> CTFont {
+        return CTFontCreateWithName("Helvetica Neue" as CFString, size, nil)
     }
 }
